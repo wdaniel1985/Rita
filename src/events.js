@@ -6,6 +6,7 @@ const messageHandler = require("./message");
 const db = require("./core/db");
 const setStatus = require("./core/status");
 const react = require("./commands/translate.react");
+const botSend = require("./core/send");
 
 const botVersion = require("../package.json").version;
 const botCreator = "Collaboration";
@@ -104,6 +105,23 @@ exports.listen = function(client)
 
    client.on("message", message =>
    {
+      if (message.author.bot)
+      {
+         return;
+      }
+      if (message.channel.type === "dm")
+      {
+         const data = {
+            client: client,
+            config: config,
+            message: message,
+            canWrite: true
+         };
+         data.color = "error";
+         data.text =
+            ":no_entry:  Direct commands currently deactivated";
+         return botSend(data);
+      }
       if (message.guild)
       {
          console.log(`${message.guild.name} - ${message.guild.id}`);
